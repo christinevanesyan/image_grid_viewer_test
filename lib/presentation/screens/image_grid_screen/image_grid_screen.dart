@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_grid_viewer_test/core/di/di.dart';
-import 'package:image_grid_viewer_test/data/models/image_variant/image_variant.dart';
 import 'package:image_grid_viewer_test/presentation/dialogs/dialogs.dart';
-import 'package:image_grid_viewer_test/presentation/screens/bloc/image_bloc.dart';
+import 'package:image_grid_viewer_test/presentation/screens/image_details_screen/image_details_screen.dart';
+import 'package:image_grid_viewer_test/presentation/screens/image_grid_screen/bloc/image_bloc.dart';
+import 'package:image_grid_viewer_test/presentation/screens/widgets/network_image_widget.dart';
 import 'package:image_grid_viewer_test/presentation/vms/image_view_model.dart';
 
 class ImageGridScreen extends StatefulWidget {
@@ -42,12 +43,7 @@ class ImageGridScreenState extends State<ImageGridScreen> {
     return BlocProvider<ImageBloc>(
       create: (context) => _imageBloc = ImageBloc(getIt()),
       child: BlocConsumer<ImageBloc, ImageState>(
-        listener: (context, state) {
-          if (state.status == ImageStateStatus.error) {
-            Dialogs.show(context,
-                content: state.errorMessage ?? 'Что-то пошло не так');
-          }
-        },
+        listener: _listener,
         builder: (context, state) {
           List<ImageViewModel>? images = state.imageViewModel;
           return Stack(
@@ -66,28 +62,25 @@ class ImageGridScreenState extends State<ImageGridScreen> {
                             hasScrollBody: false,
                           )
                         : images.isEmpty
-                            ? SliverFillRemaining(
-                                hasScrollBody: false,
-                                child: Center(
-                                  child: Text(
-                                    'Нет данных',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.grey),
-                                  ),
-                                ),
-                              )
+                            ? _NoDataWidget()
                             : SliverPadding(
                                 padding: const EdgeInsets.all(18),
                                 sliver: SliverGrid(
                                   delegate: SliverChildBuilderDelegate(
                                     (context, index) {
-                                      final item = state.imageViewModel![index];
-                                      return Image.memory(
-                                        item.imageBytes,
-                                        fit: BoxFit.cover,
-                                      );
+                                      final item = images[index];
+                                      return NetworkImageWidget(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ImageDetailScreen(
+                                                            bytes: item
+                                                                .imageBytes)));
+                                          },
+                                          imageBytes: item.imageBytes);
                                     },
-                                    childCount: state.imageViewModel?.length,
+                                    childCount: images.length,
                                   ),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
@@ -99,23 +92,48 @@ class ImageGridScreenState extends State<ImageGridScreen> {
                                 ),
                               ),
                     if (state.status == ImageStateStatus.loading)
-                      SliverToBoxAdapter(
-                          child: Center(
-                              child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(),
-                      )))
+                      SliverToBoxAdapter(child: _LoadingWidget())
                   ],
                 ),
               )),
               if (state.status == ImageStateStatus.firstLoad)
-                Positioned.fill(
-                    child: Center(
-                  child: CircularProgressIndicator(),
-                ))
+                Positioned.fill(child: _LoadingWidget())
             ],
           );
         },
+      ),
+    );
+  }
+
+  _listener(BuildContext context, ImageState state) {
+    if (state.status == ImageStateStatus.error) {
+      Dialogs.show(context,
+          content: state.errorMessage ?? 'Что-то пошло не так');
+    }
+  }
+}
+
+class _LoadingWidget extends StatelessWidget {
+  const _LoadingWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: CircularProgressIndicator());
+  }
+}
+
+class _NoDataWidget extends StatelessWidget {
+  const _NoDataWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Text(
+          'Нет данных',
+          style: TextStyle(fontSize: 18, color: Colors.grey),
+        ),
       ),
     );
   }

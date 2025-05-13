@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:image_grid_viewer_test/data/models/image_variant/image_variant.dart';
 
 class ImageViewModel {

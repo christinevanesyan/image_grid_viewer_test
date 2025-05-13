@@ -7,24 +7,20 @@ import 'package:image_grid_viewer_test/data/images_data_source/images_remote_dat
 import 'package:image_grid_viewer_test/data/services/file_download_service.dart/file_download_service.dart';
 import 'package:image_grid_viewer_test/data/services/image_service.dart';
 import 'package:image_grid_viewer_test/domain/image_repo/image_repo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.I;
 void setup() {
   getIt.registerSingleton<ChopperClient>(chopperClient);
 
-  getIt.registerSingletonAsync<SharedPreferences>(
-      () => SharedPreferences.getInstance());
-
   getIt.registerLazySingleton<ImagesLocalDataSource>(
-      () => ImagesLocalDataSource(getIt<SharedPreferences>()));
+      () => ImagesLocalDataSource());
 
   getIt.registerLazySingleton<ImagesRemoteDataSource>(
     () => ImagesRemoteDataSource(getIt<ImageService>(), FileDownloadService()),
   );
 
   getIt.registerLazySingleton<ImagesDataSource>(
-    () => ImagesLocalDataSource(getIt()),
+    () => ImagesLocalDataSource(),
   );
 
   getIt.registerLazySingleton<ImageService>(

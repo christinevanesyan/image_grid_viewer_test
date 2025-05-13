@@ -1,11 +1,8 @@
 import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_grid_viewer_test/data/models/image_items/image_items.dart';
-
 import 'package:image_grid_viewer_test/data/models/image_result/image_result.dart';
 import 'package:image_grid_viewer_test/data/models/image_variant/image_variant.dart';
 import 'package:image_grid_viewer_test/domain/image_repo/image_repo.dart';
