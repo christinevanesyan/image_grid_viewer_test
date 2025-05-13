@@ -256,8 +256,7 @@ abstract class FetchImagesEvent implements ImageEvent {
 
 /// @nodoc
 mixin _$ImageState {
-  List<ImageViewModel>? get imagesList => throw _privateConstructorUsedError;
-  List<ImageVariant>? get imageVariantList =>
+  List<ImageViewModel>? get imageViewModel =>
       throw _privateConstructorUsedError;
   String? get continuationToken => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
@@ -277,8 +276,7 @@ abstract class $ImageStateCopyWith<$Res> {
       _$ImageStateCopyWithImpl<$Res, ImageState>;
   @useResult
   $Res call(
-      {List<ImageViewModel>? imagesList,
-      List<ImageVariant>? imageVariantList,
+      {List<ImageViewModel>? imageViewModel,
       String? continuationToken,
       String? errorMessage,
       ImageStateStatus status});
@@ -299,21 +297,16 @@ class _$ImageStateCopyWithImpl<$Res, $Val extends ImageState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? imagesList = freezed,
-    Object? imageVariantList = freezed,
+    Object? imageViewModel = freezed,
     Object? continuationToken = freezed,
     Object? errorMessage = freezed,
     Object? status = null,
   }) {
     return _then(_value.copyWith(
-      imagesList: freezed == imagesList
-          ? _value.imagesList
-          : imagesList // ignore: cast_nullable_to_non_nullable
+      imageViewModel: freezed == imageViewModel
+          ? _value.imageViewModel
+          : imageViewModel // ignore: cast_nullable_to_non_nullable
               as List<ImageViewModel>?,
-      imageVariantList: freezed == imageVariantList
-          ? _value.imageVariantList
-          : imageVariantList // ignore: cast_nullable_to_non_nullable
-              as List<ImageVariant>?,
       continuationToken: freezed == continuationToken
           ? _value.continuationToken
           : continuationToken // ignore: cast_nullable_to_non_nullable
@@ -339,8 +332,7 @@ abstract class _$$ImageStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<ImageViewModel>? imagesList,
-      List<ImageVariant>? imageVariantList,
+      {List<ImageViewModel>? imageViewModel,
       String? continuationToken,
       String? errorMessage,
       ImageStateStatus status});
@@ -359,21 +351,16 @@ class __$$ImageStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? imagesList = freezed,
-    Object? imageVariantList = freezed,
+    Object? imageViewModel = freezed,
     Object? continuationToken = freezed,
     Object? errorMessage = freezed,
     Object? status = null,
   }) {
     return _then(_$ImageStateImpl(
-      imagesList: freezed == imagesList
-          ? _value._imagesList
-          : imagesList // ignore: cast_nullable_to_non_nullable
+      imageViewModel: freezed == imageViewModel
+          ? _value._imageViewModel
+          : imageViewModel // ignore: cast_nullable_to_non_nullable
               as List<ImageViewModel>?,
-      imageVariantList: freezed == imageVariantList
-          ? _value._imageVariantList
-          : imageVariantList // ignore: cast_nullable_to_non_nullable
-              as List<ImageVariant>?,
       continuationToken: freezed == continuationToken
           ? _value.continuationToken
           : continuationToken // ignore: cast_nullable_to_non_nullable
@@ -394,33 +381,19 @@ class __$$ImageStateImplCopyWithImpl<$Res>
 
 class _$ImageStateImpl implements _ImageState {
   const _$ImageStateImpl(
-      {final List<ImageViewModel>? imagesList = null,
-      final List<ImageVariant>? imageVariantList = null,
+      {final List<ImageViewModel>? imageViewModel = null,
       this.continuationToken = null,
       this.errorMessage = null,
       this.status = ImageStateStatus.initial})
-      : _imagesList = imagesList,
-        _imageVariantList = imageVariantList;
+      : _imageViewModel = imageViewModel;
 
-  final List<ImageViewModel>? _imagesList;
+  final List<ImageViewModel>? _imageViewModel;
   @override
   @JsonKey()
-  List<ImageViewModel>? get imagesList {
-    final value = _imagesList;
+  List<ImageViewModel>? get imageViewModel {
+    final value = _imageViewModel;
     if (value == null) return null;
-    if (_imagesList is EqualUnmodifiableListView) return _imagesList;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  final List<ImageVariant>? _imageVariantList;
-  @override
-  @JsonKey()
-  List<ImageVariant>? get imageVariantList {
-    final value = _imageVariantList;
-    if (value == null) return null;
-    if (_imageVariantList is EqualUnmodifiableListView)
-      return _imageVariantList;
+    if (_imageViewModel is EqualUnmodifiableListView) return _imageViewModel;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -437,7 +410,7 @@ class _$ImageStateImpl implements _ImageState {
 
   @override
   String toString() {
-    return 'ImageState(imagesList: $imagesList, imageVariantList: $imageVariantList, continuationToken: $continuationToken, errorMessage: $errorMessage, status: $status)';
+    return 'ImageState(imageViewModel: $imageViewModel, continuationToken: $continuationToken, errorMessage: $errorMessage, status: $status)';
   }
 
   @override
@@ -446,9 +419,7 @@ class _$ImageStateImpl implements _ImageState {
         (other.runtimeType == runtimeType &&
             other is _$ImageStateImpl &&
             const DeepCollectionEquality()
-                .equals(other._imagesList, _imagesList) &&
-            const DeepCollectionEquality()
-                .equals(other._imageVariantList, _imageVariantList) &&
+                .equals(other._imageViewModel, _imageViewModel) &&
             (identical(other.continuationToken, continuationToken) ||
                 other.continuationToken == continuationToken) &&
             (identical(other.errorMessage, errorMessage) ||
@@ -459,8 +430,7 @@ class _$ImageStateImpl implements _ImageState {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_imagesList),
-      const DeepCollectionEquality().hash(_imageVariantList),
+      const DeepCollectionEquality().hash(_imageViewModel),
       continuationToken,
       errorMessage,
       status);
@@ -476,16 +446,13 @@ class _$ImageStateImpl implements _ImageState {
 
 abstract class _ImageState implements ImageState {
   const factory _ImageState(
-      {final List<ImageViewModel>? imagesList,
-      final List<ImageVariant>? imageVariantList,
+      {final List<ImageViewModel>? imageViewModel,
       final String? continuationToken,
       final String? errorMessage,
       final ImageStateStatus status}) = _$ImageStateImpl;
 
   @override
-  List<ImageViewModel>? get imagesList;
-  @override
-  List<ImageVariant>? get imageVariantList;
+  List<ImageViewModel>? get imageViewModel;
   @override
   String? get continuationToken;
   @override

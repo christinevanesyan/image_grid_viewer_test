@@ -1,15 +1,17 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-class ImageViewModel {
-  ImageViewModel(this.model,
-      {required this.name, required this.imageBytes, required this.size});
-  final Uint8List imageBytes;
-  final String name;
-  final Size size;
-  final ImageViewModel model;
+import 'package:image_grid_viewer_test/data/models/image_variant/image_variant.dart';
 
-  // ImageViewModel.fromImageVariant(ImageViewModel model) {
-  //   return ImageViewModel(name: '', imageBytes: null, size: null);
-  // }
+class ImageViewModel {
+  ImageViewModel(
+      {required this.url, required this.imageBytes, required this.model});
+  final Uint8List imageBytes;
+  final String url;
+  final ImageVariant model;
+
+  factory ImageViewModel.fromImageVariant(
+      {required ImageVariant model, required Uint8List imageBytes}) {
+    return ImageViewModel(url: model.url, imageBytes: imageBytes, model: model);
+  }
 }

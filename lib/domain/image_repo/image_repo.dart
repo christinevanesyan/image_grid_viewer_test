@@ -25,7 +25,7 @@ class ImageRepoImpl implements ImageRepo {
     if (bytes == null) {
       bytes = await _imagesRemoteDataSource.getFileBytes(url: url);
       if (bytes != null) {
-        await _imagesRemoteDataSource.setImages(url: url, fileBytes: bytes);
+        await _imagesLocalDataSource.setImages(url: url, fileBytes: bytes);
       }
     }
     return bytes;

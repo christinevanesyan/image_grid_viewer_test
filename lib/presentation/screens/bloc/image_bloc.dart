@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
@@ -23,24 +24,38 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   }
   void _onFetchImagesEventToState(
       FetchImagesEvent event, Emitter<ImageState> emit) async {
-    emit(state.copyWith(status: ImageStateStatus.loading));
-    List<ImageVariant> images = List.from(state.imageVariantList ?? []);
+    List<ImageViewModel> images = List.from(state.imageViewModel ?? []);
+    if (images.isEmpty) {
+      emit(state.copyWith(status: ImageStateStatus.firstLoad));
+    } else {
+      emit(state.copyWith(status: ImageStateStatus.loading));
+    }
     try {
       if (images.isNotEmpty && event.continuationToken == null) {
         emit(state.copyWith(status: ImageStateStatus.initial));
       }
-      List<ImageVariant> temp = [];
+      List<ImageViewModel> temp = [];
       ImageResult? imageResult = await _imageRepo.getImageVariants(
           continuationToken: event.continuationToken);
       if (imageResult != null) {
         List<ImageItems> items = imageResult.items;
         for (var i = 0; i < items.length; i++) {
-          ImageItems imageItems = items[i];
-          temp.add(chooseOptimalVariant(imageItems.variants, event.screenSize));
+          var imageItems = items[i];
+
+          ImageVariant imageVariant =
+              _chooseOptimalVariant(imageItems.variants, event.screenSize);
+          Uint8List? bytes = await _imageRepo.getImage(url: imageVariant.url);
+          if (bytes != null) {
+            temp.add(ImageViewModel.fromImageVariant(
+                model: imageVariant, imageBytes: bytes));
+          }
         }
+
         images.addAll(temp);
+
         emit(state.copyWith(
-            imageVariantList: images,
+            status: ImageStateStatus.loading,
+            imageViewModel: images,
             continuationToken: imageResult.continuationToken));
       }
     } catch (e) {
@@ -49,7 +64,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
     }
   }
 
-  ImageVariant chooseOptimalVariant(
+  ImageVariant _chooseOptimalVariant(
       List<ImageVariant> variants, Size screenSize) {
     double targetSize = screenSize.width;
     variants.sort((a, b) => (a.width * a.height).compareTo(b.width * b.height));

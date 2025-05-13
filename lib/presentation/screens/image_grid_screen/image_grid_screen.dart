@@ -4,6 +4,7 @@ import 'package:image_grid_viewer_test/core/di/di.dart';
 import 'package:image_grid_viewer_test/data/models/image_variant/image_variant.dart';
 import 'package:image_grid_viewer_test/presentation/dialogs/dialogs.dart';
 import 'package:image_grid_viewer_test/presentation/screens/bloc/image_bloc.dart';
+import 'package:image_grid_viewer_test/presentation/vms/image_view_model.dart';
 
 class ImageGridScreen extends StatefulWidget {
   const ImageGridScreen({super.key});
@@ -48,63 +49,72 @@ class ImageGridScreenState extends State<ImageGridScreen> {
           }
         },
         builder: (context, state) {
-          List<ImageVariant>? images = state.imageVariantList;
-          return Scaffold(
-              body: SafeArea(
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  title: Icon(Icons.photo),
-                ),
-                images == null
-                    ? SliverFillRemaining(
-                        hasScrollBody: false,
-                      )
-                    : images.isEmpty
+          List<ImageViewModel>? images = state.imageViewModel;
+          return Stack(
+            children: [
+              Scaffold(
+                  body: SafeArea(
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    SliverAppBar(
+                      pinned: true,
+                      title: Icon(Icons.photo),
+                    ),
+                    images == null
                         ? SliverFillRemaining(
                             hasScrollBody: false,
-                            child: Center(
-                              child: Text(
-                                'Нет данных',
-                                style:
-                                    TextStyle(fontSize: 18, color: Colors.grey),
-                              ),
-                            ),
                           )
-                        : SliverPadding(
-                            padding: const EdgeInsets.all(18),
-                            sliver: SliverGrid(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final item = state.imageVariantList![index];
-                                  return Image.network(
-                                    item.url,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
-                                childCount: state.imageVariantList?.length,
+                        : images.isEmpty
+                            ? SliverFillRemaining(
+                                hasScrollBody: false,
+                                child: Center(
+                                  child: Text(
+                                    'Нет данных',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.grey),
+                                  ),
+                                ),
+                              )
+                            : SliverPadding(
+                                padding: const EdgeInsets.all(18),
+                                sliver: SliverGrid(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      final item = state.imageViewModel![index];
+                                      return Image.memory(
+                                        item.imageBytes,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                    childCount: state.imageViewModel?.length,
+                                  ),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    childAspectRatio: 1,
+                                    mainAxisSpacing: 20,
+                                    crossAxisSpacing: 20,
+                                  ),
+                                ),
                               ),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                childAspectRatio: 1,
-                                mainAxisSpacing: 20,
-                                crossAxisSpacing: 20,
-                              ),
-                            ),
-                          ),
-                if (state.status == ImageStateStatus.loading)
-                  SliverToBoxAdapter(
-                      child: Center(
-                          child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
-                  )))
-              ],
-            ),
-          ));
+                    if (state.status == ImageStateStatus.loading)
+                      SliverToBoxAdapter(
+                          child: Center(
+                              child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(),
+                      )))
+                  ],
+                ),
+              )),
+              if (state.status == ImageStateStatus.firstLoad)
+                Positioned.fill(
+                    child: Center(
+                  child: CircularProgressIndicator(),
+                ))
+            ],
+          );
         },
       ),
     );
