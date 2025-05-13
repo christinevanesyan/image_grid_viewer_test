@@ -13,15 +13,15 @@ class ImageDetailScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Просмотр')),
       body: Center(
         child: InteractiveViewer(
-          scaleEnabled: true,
-          panEnabled: false,
-          boundaryMargin: EdgeInsets.all(100),
-          minScale: 0.5,
-          maxScale: 2,
-          child: NetworkImageWidget(
-            imageBytes: bytes,
-          ),
-        ),
+            panEnabled: false,
+            boundaryMargin: EdgeInsets.all(double.infinity),
+            minScale: 0.5,
+            maxScale: 2,
+            child: Center(
+              child: NetworkImageWidget(
+                imageBytes: bytes,
+              ),
+            )),
       ),
     );
   }
