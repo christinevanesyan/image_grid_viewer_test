@@ -7,7 +7,7 @@ import 'package:image_grid_viewer_test/data/models/image_result/image_result.dar
 
 abstract class ImageRepo {
   Future<ImageResult?> getImageVariants(
-      {required Size screenSize, String? continuationToken});
+      {String? continuationToken});
   Future<Uint8List?> getImage({required String url});
 }
 
@@ -32,10 +32,10 @@ class ImageRepoImpl implements ImageRepo {
   }
 
   @override
-  Future<ImageResult?> getImageVariants(
-      {required Size screenSize, String? continuationToken}) async {
+  Future<ImageResult?> getImageVariants({String? continuationToken}) async {
     ImageResult? imageResult = await _imagesRemoteDataSource.getImageVariants(
         continuationToken: continuationToken);
+
     return imageResult;
   }
 }

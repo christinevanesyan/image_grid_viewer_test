@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_grid_viewer_test/data/models/image_items/image_items.dart';
@@ -30,12 +31,13 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
       }
       List<ImageVariant> temp = [];
       ImageResult? imageResult = await _imageRepo.getImageVariants(
-          screenSize: event.screenSize,
           continuationToken: event.continuationToken);
       if (imageResult != null) {
         List<ImageItems> items = imageResult.items;
-        List<ImageVariant> a = items.map((e) => e.variants.first).toList();
-        temp = a;
+        for (var i = 0; i < items.length; i++) {
+          ImageItems imageItems = items[i];
+          temp.add(chooseOptimalVariant(imageItems.variants, event.screenSize));
+        }
         images.addAll(temp);
         emit(state.copyWith(
             imageVariantList: images,
@@ -45,6 +47,20 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
       emit(state.copyWith(
           status: ImageStateStatus.error, errorMessage: e.toString()));
     }
+  }
+
+  ImageVariant chooseOptimalVariant(
+      List<ImageVariant> variants, Size screenSize) {
+    double targetSize = screenSize.width;
+    variants.sort((a, b) => (a.width * a.height).compareTo(b.width * b.height));
+
+    for (final variant in variants) {
+      if (variant.width >= targetSize && variant.height >= targetSize) {
+        return variant;
+      }
+    }
+
+    return variants.last;
   }
 }
 
